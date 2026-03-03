@@ -34,11 +34,12 @@ const scanPhases = [
 export default function Home() {
   const [isAuthed, setIsAuthed] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>("project");
-  const [activeSection, setActiveSection] = useState<Section>("Overview");
+  const [activeSection, setActiveSection] = useState<Section>("Scans");
   const [settingsTab, setSettingsTab] = useState<SettingsTab>("Integrations");
   const [selectedFinding, setSelectedFinding] = useState(0);
   const [findingAction, setFindingAction] = useState<string | null>(null);
   const [showShare, setShowShare] = useState(false);
+  const [shareNotice, setShareNotice] = useState("");
   const [showFindingDrawer, setShowFindingDrawer] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -108,7 +109,7 @@ export default function Home() {
 
     const done = setTimeout(() => {
       setIsAuthed(true);
-      setActiveSection("Overview");
+      setActiveSection("Scans");
       setOnboardingStep("project");
       setScanPhase(0);
       setScanTime(0);
@@ -123,7 +124,7 @@ export default function Home() {
   const resetSession = () => {
     setIsAuthed(false);
     setOnboardingStep("project");
-    setActiveSection("Overview");
+    setActiveSection("Scans");
     setProjectName("");
     setTemplate("Web App");
     setTeamSize("2-5");
@@ -155,6 +156,7 @@ export default function Home() {
     setCurrentPlan("Free");
     setUpgradeTarget(null);
     setBillingNotice("");
+    setShareNotice("");
     setShowShare(false);
     setShowFindingDrawer(false);
     setShowLogoutConfirm(false);
@@ -441,7 +443,13 @@ export default function Home() {
               {activeSection === "Scans" && (
                 <>
                   <BtnGhost>Export</BtnGhost>
-                  <BtnGhost onClick={() => setShowShare(true)} style={{ borderColor: "var(--accent-border)", color: "var(--accent)" }}>
+                  <BtnGhost
+                    onClick={() => {
+                      setShareNotice("");
+                      setShowShare(true);
+                    }}
+                    style={{ borderColor: "var(--accent-border)", color: "var(--accent)" }}
+                  >
                     Share Report
                   </BtnGhost>
                 </>
@@ -880,17 +888,40 @@ export default function Home() {
       </div>
 
       {showShare && (
-        <Overlay onClick={() => setShowShare(false)}>
+        <Overlay
+          onClick={() => {
+            setShareNotice("");
+            setShowShare(false);
+          }}
+        >
           <div style={{ width: 460, borderRadius: "var(--radius-xl)", border: "1px solid var(--border)", background: "var(--surface)", padding: 28 }}>
             <h2 style={{ fontSize: 16, fontWeight: 500, marginBottom: 6 }}>Share report</h2>
             <p style={{ fontSize: 12, color: "var(--text-3)", marginBottom: 16 }}>Read-only external report link</p>
             <Input value="https://synclayer.app/r/scan-19-8fd2" onChange={() => {}} mono />
             <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-              <BtnGhost style={{ flex: 1, height: 42, fontSize: 13 }}>Copy link</BtnGhost>
-              <BtnPrimary style={{ flex: 1 }} onClick={() => setShowShare(false)}>
+              <BtnGhost
+                style={{ flex: 1, height: 42, fontSize: 13 }}
+                onClick={() => setShareNotice("Link copied (simulated).")}
+              >
+                Copy link
+              </BtnGhost>
+              <BtnGhost
+                style={{ flex: 1, height: 42, fontSize: 13, borderColor: "var(--accent-border)", color: "var(--accent)" }}
+                onClick={() => setShareNotice("PDF downloaded (simulated).")}
+              >
+                Download PDF
+              </BtnGhost>
+              <BtnPrimary
+                style={{ flex: 1 }}
+                onClick={() => {
+                  setShareNotice("");
+                  setShowShare(false);
+                }}
+              >
                 Done
               </BtnPrimary>
             </div>
+            {shareNotice && <p style={{ marginTop: 10, fontSize: 11, color: "var(--text-3)" }}>{shareNotice}</p>}
           </div>
         </Overlay>
       )}

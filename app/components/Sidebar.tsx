@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Logo from "./Logo";
 
-const navItems = ["Overview", "Scans", "Tokens", "Insights"];
+const navItems = ["Scans", "Tokens", "Insights"];
 const bottomItems = ["Team", "Billing", "Settings"];
 
 interface SidebarProps {
